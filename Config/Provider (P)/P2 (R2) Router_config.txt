@@ -1,0 +1,29 @@
+hostname Switch
+
+mpls label protocol ldp
+!
+interface Loopback0
+ ip address 2.2.2.2 255.255.255.255
+ ip ospf 1 area 0
+!
+interface GigabitEthernet0/0
+ no switchport
+ ip address 20.0.0.2 255.255.255.252
+ ip ospf 1 area 0
+ negotiation auto
+ mpls ip
+!
+interface GigabitEthernet0/1
+ no switchport
+ ip address 30.0.0.1 255.255.255.252
+ ip ospf 1 area 0
+ negotiation auto
+ mpls ip
+
+router ospf 1
+!
+!
+mpls ldp router-id Loopback0 force
+!
+!
+end

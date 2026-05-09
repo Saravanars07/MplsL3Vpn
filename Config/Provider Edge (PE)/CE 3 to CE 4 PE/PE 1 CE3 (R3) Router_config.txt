@@ -1,0 +1,92 @@
+!
+hostname Switch
+!
+ip vrf A
+ rd 100:1
+ route-target export 100:1
+ route-target import 100:1
+!
+ip vrf B
+ rd 101:1
+ route-target export 101:1
+ route-target import 101:1
+!
+!
+!
+ip cef
+mpls label protocol ldp
+!
+!
+!
+
+!
+interface Loopback0
+ ip address 3.3.3.3 255.255.255.255
+ ip ospf 1 area 0
+!
+interface GigabitEthernet0/0
+ no switchport
+ ip address 10.0.0.2 255.255.255.252
+ ip ospf 1 area 0
+ negotiation auto
+ mpls ip
+!
+interface GigabitEthernet0/1
+ no switchport
+ ip vrf forwarding A
+ ip address 192.168.1.1 255.255.255.252
+ negotiation auto
+!
+interface GigabitEthernet0/2
+ no switchport
+ ip vrf forwarding B
+ ip address 192.168.5.1 255.255.255.252
+ negotiation auto
+!
+router ospf 10 vrf A
+ redistribute bgp 100 subnets
+ network 192.168.1.0 0.0.0.3 area 0
+!
+router ospf 20 vrf B
+ redistribute bgp 100 subnets
+ network 192.168.5.0 0.0.0.3 area 0
+!
+router ospf 1
+!
+router bgp 100
+ bgp log-neighbor-changes
+ neighbor 2.2.2.2 remote-as 100
+ neighbor 2.2.2.2 update-source Loopback0
+ neighbor 4.4.4.4 remote-as 100
+ neighbor 4.4.4.4 update-source Loopback0
+ !
+ address-family vpnv4
+  neighbor 2.2.2.2 activate
+  neighbor 2.2.2.2 send-community extended
+  neighbor 4.4.4.4 activate
+  neighbor 4.4.4.4 send-community extended
+ exit-address-family
+ !
+ address-family ipv4 vrf A
+  redistribute ospf 10
+ exit-address-family
+ !
+ address-family ipv4 vrf B
+  redistribute ospf 20
+ exit-address-family
+!
+ip forward-protocol nd
+!
+ip http server
+ip http secure-server
+!
+ip ssh server algorithm encryption aes128-ctr aes192-ctr aes256-ctr
+ip ssh client algorithm encryption aes128-ctr aes192-ctr aes256-ctr
+!
+!
+!
+!
+mpls ldp router-id Loopback0 force
+!
+!
+end
