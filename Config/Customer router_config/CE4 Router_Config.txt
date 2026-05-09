@@ -1,0 +1,31 @@
+!
+hostname R3
+!
+ip cef
+!
+ip dhcp excluded-address 172.16.2.1
+!
+ip dhcp pool One
+ network 172.16.2.0 255.255.255.0
+ default-router 172.16.2.1
+ dns-server 1.1.1.1
+!
+!
+interface Loopback0
+ ip address 8.8.8.8 255.255.255.255
+!
+interface GigabitEthernet1/0
+ ip address 192.168.6.2 255.255.255.252
+ negotiation auto
+!
+interface GigabitEthernet2/0
+ ip address 172.16.2.1 255.255.255.0
+ negotiation auto
+!
+router ospf 20
+ network 8.8.8.8 0.0.0.0 area 0
+ network 172.16.2.0 0.0.0.255 area 0
+ network 192.168.6.0 0.0.0.3 area 0
+
+end
+
