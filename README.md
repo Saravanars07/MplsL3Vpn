@@ -15,6 +15,7 @@ The objective of this project was to understand how service providers transport 
 ```text
 PC1 --- CE1 --- PE(R3) --- P(R1) --- P(R2) --- PE(R4) --- CE2 --- PC2
 ```
+![image](/Image/Topology.png)
 
 ## Device Roles
 
